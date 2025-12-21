@@ -1,0 +1,11 @@
+*.md
+__pycache__/
+*.py[cod]
+
+venv/
+.env
+
+dist/
+build/
+
+docker-compose.override.yml
