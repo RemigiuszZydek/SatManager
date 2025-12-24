@@ -1,7 +1,6 @@
 from ..database.database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from pydantic import BaseModel
 from datetime import datetime
 
 
@@ -27,14 +26,4 @@ class Role(Base):
     
     users = relationship("Users", back_populates="role")
 
-# ------------------------------------------------------------------    
 
-class CreateUserRequest(BaseModel):
-    username: str
-    password: str
-    user_role: int
-
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str

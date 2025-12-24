@@ -4,7 +4,8 @@ from datetime import timedelta
 from typing import Annotated
 from .dependencies import authenticate_user, create_access_token, get_current_user, refresh_access_token
 from ..database.database import get_db
-from ..users.models import CreateUserRequest, Token, Users
+from ..users.models import  Users
+from ..users.schemas import CreateUserRequest, Token
 from ..users import services
 from fastapi.security import OAuth2PasswordRequestForm
 
