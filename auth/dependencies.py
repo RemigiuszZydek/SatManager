@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
+from typing import List
 import os
 from ..users.models import Users
 from ..database.database import get_db
@@ -12,7 +13,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/auth/token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/auth/login')
+
+def require_roles(allowed_roles: List[str]):
+    async def role_checker(user: dict = Depends(get_current_user)):
+        if user['user_role'] not in allowed_roles:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Operation not permitted")
+        return user
+    return role_checker
 
 def decode_token(token: str):
     try:

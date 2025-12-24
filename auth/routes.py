@@ -17,13 +17,13 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 # register
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_user_endpoint(create_user_request: CreateUserRequest, db: db_dependency):
     user = services.create_user(db, create_user_request.username, create_user_request.password, create_user_request.user_role)
     return {"id": user.id, "username": user.username, "user_role":user.role_id, "user_role":user.role}
 
 # login
-@router.post("/token", response_model=Token)
+@router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     access_token, refresh_token = services.login_user(db, form_data.username, form_data.password, timedelta(minutes=1))
     return {"access_token": access_token,"refresh_token":refresh_token , "token_type": "bearer",}
