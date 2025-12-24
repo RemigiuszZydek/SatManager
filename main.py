@@ -7,10 +7,13 @@ from .auth.routes import router as auth_route
 from .auth.test_roles import router as test_role_route
 from .auth.dependencies import get_current_user
 from .users.seed_roles import seed_roles
+from .tasks.routes import router as tasks_route
+
 
 app = FastAPI()
 app.include_router(auth_route)
 app.include_router(test_role_route)
+app.include_router(tasks_route)
 
 models.Base.metadata.create_all(bind=engine)
 
