@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from ..database.database import get_db
-from .schemas import TaskCreate, TaskOut
+from .schemas import TaskCreate, TaskOut, TaskStatusUpdate, TaskNoteUpdate
 from . import services
 from ..auth.dependencies import get_current_user, require_roles
+
 
 router = APIRouter(
     prefix="/tasks",
@@ -48,3 +49,39 @@ async def get_task_by_id_endpoint(task_id: int, db: Session = db_dependency):
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
+
+@router.put("/{task_id}", response_model=TaskOut)
+async def update_task_endpoint(task_id: int, task_data: TaskCreate, db:Session = db_dependency, current_user=Depends(get_current_user)):
+    """
+    Edyttuje zlecenie po jego id
+    """
+    return services.update_task(db, task_id, task_data, current_user)
+
+@router.post("/assing/{task_id}", response_model=TaskOut)
+async def assing_task_endpoint(task_id: int, user_to_assing_id: int, db: Session = db_dependency, current_user=Depends(get_current_user)):
+    """
+    Przypisuje zlecenie do pracownika
+    """
+    return services.assign_task(db, task_id, user_to_assing_id, current_user)
+
+@router.put("/status/{task_id}", response_model=TaskOut)
+async def change_status_endpoint(task_id:int, status_update: TaskStatusUpdate, db: Session = db_dependency, current_user=Depends(get_current_user)):
+    """
+    Przypisuje status zleceniu
+    """
+    return services.change_task_status(db, task_id, status_update.status, current_user)
+
+@router.put("/note/{task_id}",response_model=TaskOut)
+async def add_note_endpoint(task_id:int, note_update: TaskNoteUpdate,db: Session = db_dependency, current_user=Depends(get_current_user)):
+    """
+    Edytuje notatke w zadaniu
+    """
+    return services.add_task_note(db, task_id, note_update.note, current_user)
+
+@router.delete("/delete/{task_id}", response_model=TaskOut)
+async def delete_note_endpoint(task_id:int, db: Session=db_dependency, current_user=Depends(get_current_user)):
+    """
+    Usuwa zlecenie
+    """
+    services.delete_task(db, task_id, current_user)
+    return {"detail": "Task deleted"}
