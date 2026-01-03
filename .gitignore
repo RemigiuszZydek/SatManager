@@ -8,4 +8,6 @@ venv/
 dist/
 build/
 
+test.db
+
 docker-compose.override.yml

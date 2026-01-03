@@ -4,7 +4,8 @@ from datetime import timedelta
 from typing import Annotated
 from .dependencies import authenticate_user, create_access_token, get_current_user, refresh_access_token
 from ..database.database import get_db
-from ..users.models import CreateUserRequest, Token, Users
+from ..users.models import  Users
+from ..users.schemas import CreateUserRequest, Token
 from ..users import services
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -25,7 +26,7 @@ async def create_user_endpoint(create_user_request: CreateUserRequest, db: db_de
 # login
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
-    access_token, refresh_token = services.login_user(db, form_data.username, form_data.password, timedelta(minutes=1))
+    access_token, refresh_token = services.login_user(db, form_data.username, form_data.password, timedelta(minutes=30))
     return {"access_token": access_token,"refresh_token":refresh_token , "token_type": "bearer",}
 
 #refresh
