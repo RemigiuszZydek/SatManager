@@ -80,7 +80,7 @@ async def add_note_endpoint(task_id:int, note_update: TaskNoteUpdate,db: Session
     """
     return services.add_task_note(db, task_id, note_update.note, current_user)
 
-@router.delete("/delete/{task_id}", response_model=TaskOut)
+@router.delete("/delete/{task_id}")
 async def delete_note_endpoint(task_id:int, db: Session=db_dependency, current_user=Depends(get_current_user)):
     """
     Usuwa zlecenie

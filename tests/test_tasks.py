@@ -259,3 +259,29 @@ def test_change_status_endpoint(client, request, headers_fixture, new_status, ex
         assert data["id"] == task_id
 
 
+def test_delete_task_endpoint(client, admin_headers):
+    task = client.post("/tasks/",
+                       headers=admin_headers,
+                       json={
+                           "title": "Admin task",
+                            "description": "Opis",
+                            "address": "x",
+                            "execution_date": None
+                       }).json()
+    
+    task_id = task["id"]
+
+    admin_response = client.delete(
+        f"/tasks/delete/{task_id}",
+        headers=admin_headers
+    )
+
+    assert admin_response.status_code == 200
+    data = admin_response.json()
+    assert data["detail"] == "Task deleted"
+
+    get_response = client.get(
+        f'/tasks/{task_id}',
+        headers=admin_headers
+    )
+    assert get_response.status_code == 404
