@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 
 class CreateUserRequest(BaseModel):
     username: str
@@ -14,13 +14,11 @@ class RoleOut(BaseModel):
     id: int
     name: str
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class UserOut(BaseModel):
     id: int
     username: str
-    user_role: RoleOut
+    user_role: RoleOut = Field(..., alias="role")
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

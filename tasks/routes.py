@@ -41,14 +41,16 @@ async def get_unassigned_tasks(db: Session = db_dependency, current_user = Depen
     return tasks
 
 @router.get("/{task_id}", response_model= TaskOut)
-async def get_task_by_id_endpoint(task_id: int, db: Session = db_dependency):
+async def get_task_by_id_endpoint(task_id: int, db: Session = db_dependency, current_user = Depends(get_current_user)):
     """
     Pobiera zlecenie po jego id
     """
     task = services.get_task_by_id(db,task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
+    
     return task
+
 
 @router.put("/{task_id}", response_model=TaskOut)
 async def update_task_endpoint(task_id: int, task_data: TaskCreate, db:Session = db_dependency, current_user=Depends(get_current_user)):
@@ -57,12 +59,12 @@ async def update_task_endpoint(task_id: int, task_data: TaskCreate, db:Session =
     """
     return services.update_task(db, task_id, task_data, current_user)
 
-@router.post("/assing/{task_id}", response_model=TaskOut)
-async def assing_task_endpoint(task_id: int, user_to_assing_id: int, db: Session = db_dependency, current_user=Depends(get_current_user)):
+@router.post("/assign/{task_id}", response_model=TaskOut)
+async def assing_task_endpoint(task_id: int, user_to_assign_id: int, db: Session = db_dependency, current_user=Depends(get_current_user)):
     """
     Przypisuje zlecenie do pracownika
     """
-    return services.assign_task(db, task_id, user_to_assing_id, current_user)
+    return services.assign_task(db, task_id, user_to_assign_id, current_user)
 
 @router.put("/status/{task_id}", response_model=TaskOut)
 async def change_status_endpoint(task_id:int, status_update: TaskStatusUpdate, db: Session = db_dependency, current_user=Depends(get_current_user)):

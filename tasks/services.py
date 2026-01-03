@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime
 from .models import Tasks
 from .schemas import TaskCreate, TaskStatusEnum
 from fastapi import HTTPException, status
+from ..users.models import Users
 
 def create_task(db: Session, task_data: TaskCreate, current_user):
     """
@@ -63,7 +64,12 @@ def update_task(db: Session, task_id: int, task_update, current_user):
     return task
 
 def assign_task(db: Session, task_id: int, user_to_assign_id: int, current_user):
-    task = db.query(Tasks).filter(Tasks.id == task_id).first()
+    task = (
+        db.query(Tasks)
+        .options(joinedload(Tasks.assigned_user).joinedload(Users.role))
+        .filter(Tasks.id == task_id)
+        .first()
+    )
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     if task.assigned_user_id is not None:

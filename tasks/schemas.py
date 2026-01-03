@@ -32,5 +32,4 @@ class TaskOut(BaseModel):
     address: str
     execution_date: Optional[datetime]
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
