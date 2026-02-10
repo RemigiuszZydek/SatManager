@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class MaterialRead(BaseModel):
     id: int
@@ -12,6 +13,11 @@ class MaterialCreate(BaseModel):
     name: str
     description: str | None = None
     price: float
+
+class MaterialUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
 
 class TaskMaterialCreate(BaseModel):
     material_id: int
