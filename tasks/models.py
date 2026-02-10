@@ -1,7 +1,6 @@
 from ..database.database import Base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey,Enum, Text
 from sqlalchemy.orm import relationship
-from pydantic import BaseModel
 from datetime import datetime
 from .schemas import TaskStatusEnum
 
@@ -25,3 +24,6 @@ class Tasks(Base):
     
     created_by_id = Column(Integer, ForeignKey("users.id"),nullable=False)
     created_by = relationship("Users", foreign_keys=[created_by_id])
+
+    materials = relationship("TaskMaterial", back_populates="task", cascade="all, delete-orphan")
+
